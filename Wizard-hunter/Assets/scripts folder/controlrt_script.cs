@@ -6,7 +6,7 @@ public class controlrt_script : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private float movementSpeed = 5f; // player movement speed, change this to slow/speed the player up. This does not change the animation at all
+    private float movementSpeed = 2f; // player movement speed, change this to slow/speed the player up. This does not change the animation at all
     private bool facingRight = true; // A boolian value that is true if the player is facing right
     SpriteRenderer m_SpriteRenderer; //empty sprite render container
     private Animator ani;// empty animator container, animator decides which animation to play
@@ -14,6 +14,7 @@ public class controlrt_script : MonoBehaviour
     private float lastInput = 1;//records the direction of the last input
     private float dashLock = 0;//locks out any other input while dashing. 
     private float input;//current input. NOT to be confused with "Input" which is defined in unity.
+    private float timeRunning = 0f;
     //private int dashPlayer = 3;
 
 
@@ -43,6 +44,7 @@ public class controlrt_script : MonoBehaviour
                 input = 0;
             transform.position = transform.position + new Vector3(input * Time.deltaTime * movementSpeed, 0, 0);//moves the character by getting the characters current position and 
                                                                                                                 //adding "input*Time.deltaTime*movementSpeed"(direction = input, Time.deltaTime = time since last frame, movementSpeed multiplier)
+
             if (input < 0 && facingRight == true || input > 0 && facingRight == false)
             {//flips the sprite if we get a input in the opposite direction that the sprite is facing
                 m_SpriteRenderer.flipX = !m_SpriteRenderer.flipX;//flips the sprite
@@ -53,7 +55,7 @@ public class controlrt_script : MonoBehaviour
             {//changes animation to idle if no input is detected
                 ani.SetBool("isRunning", false);
                 dashCatcher = dashCatcher + Time.deltaTime;//keeps track of the how much time it has been since no input has been detected
-
+                resetMovementSpeed();//resets movement speed
 
             }
             else if (input != 0)
@@ -69,6 +71,7 @@ public class controlrt_script : MonoBehaviour
                     ani.SetBool("isRunning", true);
                 lastInput = input;
                 dashCatcher = 0F;
+                increaseMovementSpeed();//increases movement speed to a max of 5f to immitate momentum
             }
         }
         else {
@@ -76,7 +79,7 @@ public class controlrt_script : MonoBehaviour
                 transform.position = transform.position + new Vector3(Time.deltaTime*20F, 0, 0);//
             else
                 transform.position = transform.position + new Vector3(-Time.deltaTime * 20F, 0, 0);
-
+            movementSpeed = 3f;
             dashLock = dashLock - Time.deltaTime;//decrements the dashlock until 0.2 seconds have passed
         }
 
@@ -86,4 +89,23 @@ public class controlrt_script : MonoBehaviour
 
 
     }
+
+
+    void increaseMovementSpeed()
+    {
+        if (movementSpeed < 5f) {
+            movementSpeed = movementSpeed + ((Time.deltaTime*timeRunning)*5 / 3f);//increases movementspeed over ~3 seconds (acomplished using testing, not math)
+            timeRunning = timeRunning + Time.deltaTime;
+        }
+        else
+        {
+            movementSpeed = 5f;//max movementspeed will be 5
+        }
+    }
+    void resetMovementSpeed() {// reset mmovement speed so that player will need to rebuild it.
+        movementSpeed = 2f;
+        timeRunning = 0;
+    }
+
+
 }
