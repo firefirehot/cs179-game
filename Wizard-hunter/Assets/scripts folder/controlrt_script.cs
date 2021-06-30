@@ -27,6 +27,8 @@ public class controlrt_script : MonoBehaviour
     private float timeRunning = 0f;
     private bool canAirJump = true;
     private bool canAirDash = true;
+    private bool prepDoubleJump = false;
+    private float saveVelocity = 5f;
     //private int dashPlayer = 3;
 
 
@@ -65,31 +67,44 @@ public class controlrt_script : MonoBehaviour
             else
                 inputUD = 0;
 
-            transform.position = transform.position + new Vector3(inputLR * Time.deltaTime * movementSpeed, 0, 0);//moves the character by getting the characters current position and 
-                                                                                                                  //adding "input*Time.deltaTime*movementSpeed"(direction = inputLR, Time.deltaTime = time since last frame, movementSpeed multiplier)
+            //transform.position = transform.position + new Vector3(inputLR * Time.deltaTime * movementSpeed, 0, 0);//moves the character by getting the characters current position and 
+            //adding "input*Time.deltaTime*movementSpeed"(direction = inputLR, Time.deltaTime = time since last frame, movementSpeed multiplier)
 
-
+            //rb.velocity = new Vector2(inputLR * Time.deltaTime * movementSpeed,0);
+            if (rb.velocity.x < 5f && rb.velocity.x > -5f)
+                rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * 10, 0);
             if (isGrounded()) {
                 canAirJump = true;
                 canAirDash = true;
             }
-            if (inputUD == 1 && isGrounded())//enables jump if player is on the ground and they press up
-                rb.velocity = new Vector2(0f, 5f);//this determines the speed at which pressing up will propell you at
-            else if(inputUD == 1 && canAirJump) {//enables jump if player has not double jumped yet and they press up
-                rb.velocity = new Vector2(0f, 5f);//this determines the speed at which pressing up will propell you at
+            if (inputUD == 1 && isGrounded() && prepDoubleJump == false)
+            {//enables jump if player is on the ground and they press up
+                Debug.Log("active");
+                rb.velocity = new Vector2(rb.velocity.x, 5f);//this determines the speed at which pressing up will propell you at
+                prepDoubleJump = true;
+            }
+            else if (inputUD == 1 && canAirJump && prepDoubleJump == true)
+            {//enables jump if player has not double jumped yet and they press up
+                Debug.Log("print1");
+                rb.velocity = new Vector2(rb.velocity.x, 5f);//this determines the speed at which pressing up will propell you at
                 canAirJump = false;
+                prepDoubleJump = false;
             }
 
             if (inputLR < 0 && facingRight == true || inputLR > 0 && facingRight == false)
             {//flips the sprite if we get a input in the opposite direction that the sprite is facing
                 m_SpriteRenderer.flipX = !m_SpriteRenderer.flipX;//flips the sprite
                 facingRight = !facingRight;//records the direction sprite is facing
+                
 
             }
             if (inputLR == 0)
             {//changes animation to idle if no input is detected
                 ani.SetBool("isRunning", false);
                 dashCatcher = dashCatcher + Time.deltaTime;//keeps track of the how much time it has been since no input has been detected
+                if (isGrounded()) {
+                    rb.velocity = new Vector2(rb.velocity.x + (-rb.velocity.x * Time.deltaTime*4f), rb.velocity.y);
+                }
                 resetMovementSpeed();//resets movement speed
 
             }
@@ -99,13 +114,16 @@ public class controlrt_script : MonoBehaviour
                 if ((dashCatcher < 0.3 && dashCatcher > 0.0001 && ((lastInput > 0 && inputLR > 0) || (lastInput < 0 && inputLR < 0))) && canAirDash)
                 {
                     ani.SetBool("isRunning", false);
-                    ani.SetBool("dashing",true);
-                    dashLock = 0.2F;//sets the dashLock to prevent user input for 0.2 seconds
+                    ani.SetBool("dashing", true);
+                    dashLock = 0.15F;//sets the dashLock to prevent user input for 0.2 seconds
                     if (!isGrounded())
                         canAirDash = false;
                 }
                 else
+                {
                     ani.SetBool("isRunning", true);
+                    saveVelocity = rb.velocity.x;
+                }
                 lastInput = inputLR;
                 dashCatcher = 0F;
                 increaseMovementSpeed();//increases movement speed to a max of 5f to immitate momentum
@@ -116,8 +134,16 @@ public class controlrt_script : MonoBehaviour
                 transform.position = transform.position + new Vector3(Time.deltaTime*20F, 0, 0);//
             else
                 transform.position = transform.position + new Vector3(-Time.deltaTime * 20F, 0, 0);
-            movementSpeed = 3f;
+            
             dashLock = dashLock - Time.deltaTime;//decrements the dashlock until 0.2 seconds have passed
+            if (dashLock <= 0)
+            {
+                if (saveVelocity < -3f && saveVelocity > 3f)
+                    rb.velocity = new Vector2(saveVelocity, 0);
+                else {
+                    rb.velocity = new Vector2(lastInput * 3,0);
+                }
+            }
         }
 
 
@@ -128,7 +154,7 @@ public class controlrt_script : MonoBehaviour
     }
 
     bool isGrounded() {//credit to Code Monkey
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 2f, platformLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
+        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, platformLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
         return raycastHit.collider != null;//returns true if it collided, false if it didn't
     }
 
