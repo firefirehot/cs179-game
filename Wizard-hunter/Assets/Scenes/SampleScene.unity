@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 252328583}
   - component: {fileID: 252328582}
   - component: {fileID: 252328581}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wall left(invisible)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 751258090}
   - component: {fileID: 751258089}
   - component: {fileID: 751258088}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wall right(invisible)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -546,7 +546,7 @@ Transform:
   m_LocalScale: {x: 2.8719, y: 2.5814, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &874188650
 BoxCollider2D:
@@ -610,6 +610,9 @@ MonoBehaviour:
   platformLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &1736855586
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,6 +705,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1892787252}
   - component: {fileID: 1892787251}
+  - component: {fileID: 1892787253}
   m_Layer: 0
   m_Name: Stronghold_Background_2
   m_TagString: Untagged
@@ -772,5 +776,24 @@ Transform:
   m_LocalScale: {x: 3.1703885, y: 4.8462076, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1892787253
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892787250}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7c2643fed1e3bf6459a12cb7f3d3214e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
