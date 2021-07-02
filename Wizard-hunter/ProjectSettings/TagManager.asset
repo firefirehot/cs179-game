@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Spike
+  - HP Bar
   layers:
   - Default
   - TransparentFX
@@ -14,7 +16,7 @@ TagManager:
   - ground
   - Player
   - wall
-  - 
+  - trap
   - 
   - 
   - 
@@ -40,4 +42,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: traps
+    uniqueID: 1695856789
+    locked: 0
+  - name: player
+    uniqueID: 819739563
     locked: 0

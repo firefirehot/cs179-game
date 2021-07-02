@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 //credit to unity documentation https://docs.unity3d.com/ScriptReference/Rigidbody2D-velocity.html
@@ -14,6 +15,9 @@ public class controlrt_script : MonoBehaviour
 
     [SerializeField] private LayerMask platformLayerMask;
     [SerializeField] private LayerMask wallLayerMask;
+    [SerializeField] private LayerMask trapLayerMask;
+    //private GameObject hpObject; //current added
+    //private Image spikeObjectImage; //current added
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
   
@@ -25,7 +29,7 @@ public class controlrt_script : MonoBehaviour
     private float dashLock = 0;//locks out any other input while dashing. 
     private float inputLR;//current left or right input. NOT to be confused with "Input" which is defined in unity.
     private float inputUD;//current up or down input. NOT to be confused with "Input" which is defined in unity.
-    
+    private float invisibilityAfterHit = 0;
 
     private bool canAirJump = true;//set to true when u want to enable a second jump along with prepDoubleJump
     private bool prepDoubleJump = false; //set to true when u want to enable a second jump along with canAirJump
@@ -33,8 +37,9 @@ public class controlrt_script : MonoBehaviour
     private bool canAirDash = true; // set to true when u want to enable a dash
 
     private float saveVelocity = 5f;
-    //private int dashPlayer = 3;
 
+    //private int dashPlayer = 3;
+    my_hp_script tempObject;
 
     void Start()
     {
@@ -43,6 +48,9 @@ public class controlrt_script : MonoBehaviour
         facingRight = true; 
         ani = GetComponent<Animator>(); // assigns empty container with the actual component
         boxCollider = GetComponent<BoxCollider2D>();
+        //hpObject = GameObject.FindWithTag("HP Bar");
+        tempObject = GameObject.FindGameObjectWithTag("HP Bar").GetComponent<my_hp_script>();
+        //spikeObjectImage = hpObject.GetComponent<Image>();//current added
 
     }
 
@@ -73,7 +81,10 @@ public class controlrt_script : MonoBehaviour
 
 
             if (rb.velocity.x < 5f && rb.velocity.x > -5f)
+            {
                 rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * 10, 0);
+                
+            }
 
             if (isGrounded())
             {
@@ -84,12 +95,12 @@ public class controlrt_script : MonoBehaviour
 
             if (inputUD == 1 && isGrounded() && prepDoubleJump == false)
             {//enables jump if player is on the ground and they press up
-                rb.velocity = new Vector2(rb.velocity.x, 5f);//this determines the speed at which pressing up will propell you at
+                rb.velocity = new Vector2(rb.velocity.x,  5f);//this determines the speed at which pressing up will propell you at
                 prepDoubleJump = true;//enables the double jump after the first jump
             }
             else if (inputUD == 1 && canAirJump && prepDoubleJump == true)
             {//enables jump if player has not double jumped yet and they press up
-                rb.velocity = new Vector2(rb.velocity.x, 5f);//this determines the speed at which pressing up will propell you at
+                rb.velocity = new Vector2(rb.velocity.x,  5f);//this determines the speed at which pressing up will propell you at
                 canAirJump = false;//disables any jumps in air
                 prepDoubleJump = false;//disables the double jump
             }
@@ -138,13 +149,13 @@ public class controlrt_script : MonoBehaviour
                 inputUD = 0;
                 if (lastInput > 0)
                 {
-                    rb.velocity = new Vector2(-4f, 3f);//gives player a new velocity of -4x and 3y after wall jumping
+                    rb.velocity = new Vector2(-4f,  3f);//gives player a new velocity of -4x and 3y after wall jumping
                     ani.SetTrigger("wallJump"); //wall jump animation plays
 
                 }
                 if (lastInput < 0)
                 {
-                    rb.velocity = new Vector2(4f, 3f); //gives player a new velocity of 4x and 3y after wall jumping
+                    rb.velocity = new Vector2(4f,  3f); //gives player a new velocity of 4x and 3y after wall jumping
                     ani.SetTrigger("wallJump_unflipped");//flipped version of the wall jump animation plays
                 }
                 facingRight = !facingRight;//records the direction sprite is facing
@@ -179,13 +190,29 @@ public class controlrt_script : MonoBehaviour
 
 
 
+        if (invisibilityAfterHit > 0f)
+        {
+            invisibilityAfterHit = invisibilityAfterHit - Time.deltaTime;
 
+        }
+        else if (isTouchingTrap()) {
+            //gameObject.SendMessage("halfHeartDamage");
+            //hpObject.halfHeartDamage();
+            //hpObject.halfHeartDamage();
+            tempObject.halfHeartDamage();
+            invisibilityAfterHit = 1.5f;//sets how long the player is invisible for after being hit
+        }
 
 
     }//end of update
 
     bool isGrounded() {//credit to Code Monkey
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, platformLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
+        return raycastHit.collider != null;//returns true if it collided, false if it didn't
+    }
+
+    bool isTouchingTrap() {
+        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.05f, 0f, Vector2.down, 0f, trapLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
         return raycastHit.collider != null;//returns true if it collided, false if it didn't
     }
 
