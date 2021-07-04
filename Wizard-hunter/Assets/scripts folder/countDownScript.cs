@@ -7,7 +7,7 @@ public class countDownScript : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private float initialTime = 300f;
+    private float initialTime = 240f;
     private Text myText;
     //public Text myText;
     private float TimePassed;
@@ -25,7 +25,7 @@ public class countDownScript : MonoBehaviour
         int tenSecond = 0;
         int oneSecond = 0;
 
-        if (TimePassed < 301f)
+        if (TimePassed < initialTime+1)
         {
             TimePassed = Time.deltaTime + TimePassed;
             timeCalc = initialTime - TimePassed;
@@ -50,6 +50,7 @@ public class countDownScript : MonoBehaviour
         }
         else {
             myText.text = "0" + ":" + "0" + "0";
+            FindObjectOfType<managingScript>().playerDied();
         }
 
     }

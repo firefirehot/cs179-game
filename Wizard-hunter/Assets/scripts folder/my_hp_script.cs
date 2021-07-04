@@ -36,7 +36,7 @@ public class my_hp_script : MonoBehaviour
 
 
     public void halfHeartDamage() {//I should change this to a switch statement but im wayyyyy to lazy to actually do it instead of typing all this long, run-on-sentence out.
-        if(hitsTaken < 7)
+        if(hitsTaken < 8)
             hitsTaken = hitsTaken + 1;
         if (hitsTaken == 0) { myImage.sprite = fourHearts; }
         else if (hitsTaken == 1) { myImage.sprite = threeHalfHearts; }
@@ -46,7 +46,7 @@ public class my_hp_script : MonoBehaviour
         else if (hitsTaken == 5) { myImage.sprite = oneHalfHearts; }
         else if (hitsTaken == 6) { myImage.sprite = oneHearts; }
         else if (hitsTaken == 7) { myImage.sprite = halfHearts; }
-        //else if (hitsTaken == 8) { myImage.sprite = dead; kill player }
+        else if (hitsTaken == 8) { FindObjectOfType<managingScript>().playerDied(); }
         
     }
 }

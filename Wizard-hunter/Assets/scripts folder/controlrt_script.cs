@@ -6,7 +6,7 @@ using UnityEngine;
 //credit to unity documentation https://docs.unity3d.com/ScriptReference/Rigidbody2D-velocity.html
 //credit to youtube video by samyam https://www.youtube.com/watch?v=3Ad1wr3qBRw&t=189s   and   https://www.youtube.com/watch?v=1Ll1fy2EehU  and  https://www.youtube.com/watch?v=on9nwbZngyw&t=376s
 //crdit to youtube video by Coding With Unity https://www.youtube.com/watch?v=VHYke1HrlMY
-//credit to youtube video by Brackeys https://www.youtube.com/watch?v=gAB64vfbrhI
+//credit to youtube video by Brackeys https://www.youtube.com/watch?v=gAB64vfbrhI and https://www.youtube.com/watch?v=VbZ9_C4-Qbo
 //credit to youtube video by Code Monkey https://www.youtube.com/watch?v=c3iEl5AwUF8&t=659s
 
 public class controlrt_script : MonoBehaviour
