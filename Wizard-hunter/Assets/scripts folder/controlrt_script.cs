@@ -20,6 +20,7 @@ public class controlrt_script : MonoBehaviour
     //private Image spikeObjectImage; //current added
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private float jumpHeight = 7.5f;
   
     private bool facingRight = true; // A boolian value that is true if the player is facing right
     SpriteRenderer m_SpriteRenderer; //empty sprite render container
@@ -91,16 +92,20 @@ public class controlrt_script : MonoBehaviour
                 canAirJump = true;
                 canAirDash = true;
             }
+            else {
+                rb.velocity = rb.velocity + new Vector2(0f, -Time.deltaTime*10f);//THIS IS THE GRAVITY
+
+            }
 
 
             if (inputUD == 1 && isGrounded() && prepDoubleJump == false)
             {//enables jump if player is on the ground and they press up
-                rb.velocity = new Vector2(rb.velocity.x,  5f);//this determines the speed at which pressing up will propell you at
+                rb.velocity = new Vector2(rb.velocity.x, jumpHeight);//this determines the speed at which pressing up will propell you at
                 prepDoubleJump = true;//enables the double jump after the first jump
             }
             else if (inputUD == 1 && canAirJump && prepDoubleJump == true)
             {//enables jump if player has not double jumped yet and they press up
-                rb.velocity = new Vector2(rb.velocity.x,  5f);//this determines the speed at which pressing up will propell you at
+                rb.velocity = new Vector2(rb.velocity.x, jumpHeight);//this determines the speed at which pressing up will propell you at
                 canAirJump = false;//disables any jumps in air
                 prepDoubleJump = false;//disables the double jump
             }
@@ -149,13 +154,13 @@ public class controlrt_script : MonoBehaviour
                 inputUD = 0;
                 if (lastInput > 0)
                 {
-                    rb.velocity = new Vector2(-4f,  3f);//gives player a new velocity of -4x and 3y after wall jumping
+                    rb.velocity = new Vector2(-4f,  4f);//gives player a new velocity of -4x and 3y after wall jumping
                     ani.SetTrigger("wallJump"); //wall jump animation plays
 
                 }
                 if (lastInput < 0)
                 {
-                    rb.velocity = new Vector2(4f,  3f); //gives player a new velocity of 4x and 3y after wall jumping
+                    rb.velocity = new Vector2(4f,  4f); //gives player a new velocity of 4x and 3y after wall jumping
                     ani.SetTrigger("wallJump_unflipped");//flipped version of the wall jump animation plays
                 }
                 facingRight = !facingRight;//records the direction sprite is facing
