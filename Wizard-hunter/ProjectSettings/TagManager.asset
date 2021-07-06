@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Spike
+  - HP Bar
   layers:
   - Default
   - TransparentFX
@@ -12,9 +14,9 @@ TagManager:
   - Water
   - UI
   - ground
-  - 
-  - 
-  - 
+  - Player
+  - wall
+  - trap
   - 
   - 
   - 
@@ -49,4 +51,12 @@ TagManager:
     locked: 0
   - name: Game Objects
     uniqueID: 2741966837
+  - name: traps
+    uniqueID: 1695856789
+    locked: 0
+  - name: player
+    uniqueID: 819739563
+    locked: 0
+  - name: UI
+    uniqueID: 3830590731
     locked: 0
