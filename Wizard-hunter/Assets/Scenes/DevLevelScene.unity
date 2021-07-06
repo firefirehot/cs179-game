@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 108125000}
   - component: {fileID: 108124999}
   - component: {fileID: 108124998}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -605,7 +605,7 @@ GameObject:
   - component: {fileID: 649101519}
   - component: {fileID: 649101518}
   - component: {fileID: 649101517}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: LeftBoundWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 766709170}
   - component: {fileID: 766709169}
   - component: {fileID: 766709168}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: RightBoundWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1512,6 +1512,12 @@ MonoBehaviour:
   platformLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  trapLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!50 &1204497325
 Rigidbody2D:
   serializedVersion: 4
@@ -1985,7 +1991,7 @@ GameObject:
   - component: {fileID: 1817917071}
   - component: {fileID: 1817917070}
   - component: {fileID: 1817917069}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2116,7 +2122,7 @@ GameObject:
   - component: {fileID: 1848390164}
   - component: {fileID: 1848390163}
   - component: {fileID: 1848390162}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
