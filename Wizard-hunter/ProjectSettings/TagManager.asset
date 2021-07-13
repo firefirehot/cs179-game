@@ -17,8 +17,8 @@ TagManager:
   - Player
   - wall
   - trap
-  - 
-  - 
+  - Thick_platform
+  - Thin_platform
   - Grapple
   - 
   - 
@@ -51,6 +51,7 @@ TagManager:
     locked: 0
   - name: Game Objects
     uniqueID: 2741966837
+    locked: 0
   - name: traps
     uniqueID: 1695856789
     locked: 0
