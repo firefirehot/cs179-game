@@ -1412,7 +1412,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1736855586}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1710,7 +1710,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  ropeLaunchSpeedMultiplayer: 5.4
+  ropeLaunchSpeedMultiplayer: 25.7
   isGrappling: 0
 --- !u!1 &1892787250
 GameObject:

@@ -112,6 +112,8 @@ public class GrappleRope : MonoBehaviour
             Vector2 currentPosition = Vector2.Lerp(grapplingGun.firePoint.position, targetPosition, ropeLaunchSpeedCurve.Evaluate(moveTime) * ropeLaunchSpeedMultiplayer);
 
             m_lineRenderer.SetPosition(i, currentPosition);
+            m_lineRenderer.sortingOrder = 50;
+            m_lineRenderer.sortingLayerName = "player";
         }
     }
 
