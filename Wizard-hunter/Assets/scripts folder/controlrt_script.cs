@@ -33,11 +33,13 @@ public class controlrt_script : MonoBehaviour
     private float wallJumpVelocityY = 5f; // changes velocity of player after wall Jumping
     private bool canAirJump = true;//set to true when u want to enable a second jump along with prepDoubleJump
     private float fallSpeed = 10f; // changes the player's fall rate while not touching ground or platforms
+    private float maxAirSpeed = 7f; // sets player max speed in air
+    private float airControl = 0.5f; // reduces the player's ability to control velocity in air
 
     //running speed vars
     private float maxSpeed = 5f; //sets a limit in how much velocity the player can add to themselves using the LR inputs
     private float playerAcceleration = 8f; //determines how fast the player will accelerate
-    private float slowSpeed = 4f; // changes how fast the player will slow down due to touching a floor or platform(FWI RigidBody2D friction is also slowing the player so slowSpeed == 0 does not mean the player will never stop)
+    private float slowSpeed = 7f; // changes how fast the player will slow down due to touching a floor or platform(FWI RigidBody2D friction is also slowing the player so slowSpeed == 0 does not mean the player will never stop)
 
     //dash vars
     private float lastInput = 1;//records the direction of the last LR input(used for dashing and wall jumping)
@@ -49,7 +51,6 @@ public class controlrt_script : MonoBehaviour
     private bool canAirDash = true; // locks out dash when false. Alows us to only allow one dash per jump
     private float saveVelocity = 5f;//save's the velocity before a dash so that the player can return to the saved velocity after the dash.
     private float minVelocityAfterDash = 3f;//sets the minimum velocity the player will have after the dash.
-    private float velocitySaver = 0f;
     /*END OF MOVEMENT VARS*****************************************************************************/
 
     //gets user inputs
@@ -121,19 +122,28 @@ public class controlrt_script : MonoBehaviour
             //***
 
 
-            //player LR input turns into movement here.
-            if ((rb.velocity.x < maxSpeed && rb.velocity.x > -maxSpeed))// prevents player from increasing running speed forever
-            {
 
-                rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0);// accelerates the player if they give a LR input
-                if (((inputLR == 1 && rb.velocity.x < velocitySaver) || (inputLR == -1 && rb.velocity.x > velocitySaver)) && (wallBool == false && (!(platformBool && interactionStatus == 0)))) {
-                    rb.velocity = new Vector2(velocitySaver, rb.velocity.y);
-                }
-                if (inputLR != 0)
-                    velocitySaver = rb.velocity.x;
+            //player LR input turns into movement here.
+            if (groundedBool || (platformBool && interactionStatus == 1))
+            {
+                if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)
+                    rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0f);// accelerates the player if they give a LR input
                 else
-                    velocitySaver = 0;
+                {
+                    if(inputLR != 0)
+                        rb.velocity = new Vector2(inputLR * maxSpeed, rb.velocity.y);
+                }
             }
+            else
+            {
+                if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxAirSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxAirSpeed)
+                    rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration * airControl, 0f);// accelerates the player if they give a LR input
+                else
+                    if (inputLR != 0)
+                        rb.velocity = new Vector2(inputLR * maxAirSpeed, rb.velocity.y);
+            }
+
+
             //**
 
 
@@ -261,10 +271,13 @@ public class controlrt_script : MonoBehaviour
         }
         else if (dashLock > 0)//code that handles dashing
         {
-            if (lastInput > 0)
-                transform.position = transform.position + new Vector3(Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking right
-            else
-                transform.position = transform.position + new Vector3(-Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking left
+            if (!wallBool && !(platformBool && interactionStatus == 0))//rb.MovePosition will prevent dashing from moving through walls but it is glitched. Needs further fixing
+                if (lastInput > 0)
+                    transform.position = transform.position + new Vector3(Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking right
+                    //rb.MovePosition(new Vector2(transform.position.x + Time.deltaTime * dashRange, transform.position.y));
+                else
+                    //rb.MovePosition(new Vector2(transform.position.x - Time.deltaTime * dashRange, transform.position.y));
+                    transform.position = transform.position + new Vector3(-Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking left
 
             dashLock = dashLock - Time.deltaTime;//decrements the dashlock until 0.2 seconds have passed
             if (dashLock <= 0)//when the dashlock is over this if statment gives the player back their velocity that they had before the dash
@@ -311,35 +324,46 @@ public class controlrt_script : MonoBehaviour
 
     bool isTouchingTrap() {
         //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.05f, 0f, Vector2.down, 0f, trapLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
-        float mathLenency = 0.1f;
+ 
         Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size, 0f, trapLayerMask);
         return collidedPlatform != null;//returns true if it collided, false if it didn't
     }
 
-    bool isTouchingThickPlatform(ref int objectTouched)
-    {//returns true if the object is touching a platform and returns 0 if player is on top of the platform, 1 if player is below platform, 2 if player is next to platform, and -1 if player is not touching anything
-        //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size * 1.05f, 0f, Vector2.down, 0.1f, thickPlatformLayerMask);
 
-        float mathLenency = 0.1f;
-        Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size + new Vector3(mathLenency, mathLenency, 0f), 0f, thickPlatformLayerMask);
-        float playerColliderX = boxCollider.bounds.center.x;
-        float playerColliderY = boxCollider.bounds.center.y;
-        float playerColliderSizeX = boxCollider.bounds.size.x / 2f;
-        float playerColliderSizeY = boxCollider.bounds.size.y / 2f;
+    void DrawQuad(Rect position, Color color, Vector2 sizeBox)
+    {
+        Texture2D texture = new Texture2D(1,1);
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+        GUI.skin.box.normal.background = texture;
+        GUI.Box(position, GUIContent.none);
+    }
 
-        ;
-        if (collidedPlatform == null)
+    bool isTouchingThickPlatform(ref int objectTouched) {
+        RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y*1.1f),
+            new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y*1.2f, thickPlatformLayerMask);
+
+        float boxColliderCenterX = boxCollider.bounds.center.x;
+        float boxColliderCenterY = boxCollider.bounds.center.y;
+        float boxColliderSizeX = boxCollider.bounds.size.x / 2f;
+        float boxColliderSizeY = boxCollider.bounds.size.y / 2f;
+        float mathLenency = 0.02f;//this gives the math the ability not to be perfect.
+        float detectionLenency = 0.3f;//this gives the detection a bit more time in order to turn the platform back on
+
+
+        if (raycastHit.collider == null)
         {
             objectTouched = -1;
             return false;
         }
-        else if ((playerColliderY + mathLenency > playerColliderSizeY + collidedPlatform.bounds.size.y / 2f + collidedPlatform.bounds.center.y) 
-            && (playerColliderY - mathLenency < playerColliderSizeY + collidedPlatform.bounds.size.y / 2f + collidedPlatform.bounds.center.y))
+        else if (((AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) > boxColliderSizeY - detectionLenency) 
+            && (AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) <= boxColliderSizeY + mathLenency)) 
+            && (boxColliderCenterY - raycastHit.point.y > 0)
+            && (AbsoluteValueFloat(boxCollider.bounds.center.x - raycastHit.collider.bounds.center.x) - raycastHit.collider.bounds.size.x/2f - boxColliderSizeX <= 0))
         {//determines if the ray hit a point below the player
             objectTouched = 1; //1 will be floor
         }
-        else if (((playerColliderSizeX + playerColliderX < collidedPlatform.bounds.center.x - collidedPlatform.bounds.size.x / 2f) 
-            || (playerColliderX - playerColliderSizeX > collidedPlatform.bounds.center.x + collidedPlatform.bounds.size.x / 2f)))
+        else if (((AbsoluteValueFloat(raycastHit.point.x - boxColliderCenterX) > boxColliderSizeX - 0.1) && (AbsoluteValueFloat(raycastHit.point.x - boxColliderCenterX) < boxColliderSizeX + 0.1)))
         {
             //determines if the ray hit a point next to the player
             objectTouched = 0; //0 will be wall
@@ -349,46 +373,53 @@ public class controlrt_script : MonoBehaviour
 
         return true;
 
+
     }
 
-    bool isTouchingThinPlatform()
+
+
+    bool isTouchingThinPlatform()//FWI thin platforms need to be less than 30% player size
     {//returns true if the object is touching a platform and returns 0 if player is on top of the platform, 1 if player is below platform, 2 if player is next to platform, and -1 if player is not touching anything
-        //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.01f, 0f, Vector2.down, 0f, thinPlatformLayerMask);
-        //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.03f, thinPlatformLayerMask);
-        float mathLenency = 0.1f;
-        Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size + new Vector3(mathLenency, mathLenency, 0f), 0f, thinPlatformLayerMask);
-        float playerColliderX = boxCollider.bounds.center.x;
-        float playerColliderY = boxCollider.bounds.center.y;
-        float playerColliderSizeX = boxCollider.bounds.size.x / 2f;
-        float playerColliderSizeY = boxCollider.bounds.size.y / 2f;
+        RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y * 0.9f),
+            new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y/10), 0f, Vector2.down, boxCollider.bounds.size.y * 1.2f + boxCollider.bounds.size.y*0.2f, thinPlatformLayerMask);
+        //can be changed to multi_hit if you use  int return_array_size = Physics2D.BoxCast(center,  bounds, angle, direction, distance, RaycastHit2D[], LayerMask);
 
+        float boxColliderCenterX = boxCollider.bounds.center.x;
+        float boxColliderCenterY = boxCollider.bounds.center.y;
+        float boxColliderSizeX = boxCollider.bounds.size.x / 2f;
+        float boxColliderSizeY = boxCollider.bounds.size.y / 2f;
+        float mathLenency = 0.06f;
+        float detectionLenency = 0.3f;//this gives the detection a bit more time in order to turn the platform back on
 
-        if (collidedPlatform == null)
+    
+
+            if (raycastHit.collider == null)
         {
+            
             return false;
         }
-        else if (((playerColliderY + mathLenency > playerColliderSizeY + collidedPlatform.bounds.size.y / 2f + collidedPlatform.bounds.center.y) && (playerColliderY - mathLenency < playerColliderSizeY + collidedPlatform.bounds.size.y / 2f + collidedPlatform.bounds.center.y)) &&
-            ((playerColliderSizeX + playerColliderX > collidedPlatform.bounds.center.x - collidedPlatform.bounds.size.x / 2f) && (playerColliderX - playerColliderSizeX < collidedPlatform.bounds.center.x + collidedPlatform.bounds.size.x / 2f)))
+        else if (((AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) > boxColliderSizeY - detectionLenency) 
+            && (AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) <= boxColliderSizeY + mathLenency)) 
+            && (boxColliderCenterY - raycastHit.point.y > 0)//checks if char is within the correct y range
+            && (AbsoluteValueFloat(boxCollider.bounds.center.x - raycastHit.collider.bounds.center.x) - raycastHit.collider.bounds.size.x / 2f - boxColliderSizeX <= 0)
+            && (inputUD != -1))
+            
         {//determines if the ray hit a point below the player
-            if (inputUD != -1)
-            {
-                collidedPlatform.isTrigger = false;//player can't fall through on false
-                return true;
-            }
-            else
-            {
-                collidedPlatform.isTrigger = true;
-                return false;
-            }
+
+            
+            raycastHit.collider.isTrigger = false;
+            return true;
         }
-        else
-        {
-            collidedPlatform.isTrigger = true;
-            return false;
-        }
+        raycastHit.collider.isTrigger = true;
+        return false;
+
+
+
     }
 
-    bool isAgainstWall() {
+      
+
+        bool isAgainstWall() {
         float mathLenency = 0.1f;
         Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size + new Vector3(mathLenency, mathLenency, 0f), 0f, wallLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
 
