@@ -33,8 +33,8 @@ public class controlrt_script : MonoBehaviour
     private float wallJumpVelocityY = 5f; // changes velocity of player after wall Jumping
     private bool canAirJump = true;//set to true when u want to enable a second jump along with prepDoubleJump
     private float fallSpeed = 10f; // changes the player's fall rate while not touching ground or platforms
-    private float maxAirSpeed = 7f; // sets player max speed in air
-    private float airControl = 0.5f; // reduces the player's ability to control velocity in air
+    //private float maxAirSpeed = 7f; // sets player max speed in air
+   // private float airControl = 0.5f; // reduces the player's ability to control velocity in air
 
     //running speed vars
     private float maxSpeed = 5f; //sets a limit in how much velocity the player can add to themselves using the LR inputs
@@ -56,6 +56,7 @@ public class controlrt_script : MonoBehaviour
     //gets user inputs
     private float inputLR;//current left or right input. NOT to be confused with "Input" which is defined in unity.
     private float inputUD;//current up or down input. NOT to be confused with "Input" which is defined in unity.
+    private float downHold;//if player presses down arrow key we want to "hold" it for a couple frames so that they fall through platforms
 
     //invinsibility variables
     private float setInvincibility = 1.5f;
@@ -116,31 +117,27 @@ public class controlrt_script : MonoBehaviour
             if (Input.GetKeyDown("w"))
                 inputUD = 1;
             else if (Input.GetKey("s"))
+            {
                 inputUD = -1;
+                
+            }
             else
                 inputUD = 0;
+
+
+
             //***
 
 
 
+
             //player LR input turns into movement here.
-            if (groundedBool || (platformBool && interactionStatus == 1))
+
+            if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)
             {
-                if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)
-                    rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0f);// accelerates the player if they give a LR input
-                else
-                {
-                    if(inputLR != 0)
-                        rb.velocity = new Vector2(inputLR * maxSpeed, rb.velocity.y);
-                }
-            }
-            else
-            {
-                if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxAirSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxAirSpeed)
-                    rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration * airControl, 0f);// accelerates the player if they give a LR input
-                else
-                    if (inputLR != 0)
-                        rb.velocity = new Vector2(inputLR * maxAirSpeed, rb.velocity.y);
+                rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0f);// accelerates the player if they give a LR input
+                if (rb.velocity.x > maxSpeed || rb.velocity.x < -maxSpeed)
+                    rb.velocity = new Vector2(inputLR * maxSpeed - 0.01f, rb.velocity.y);
             }
 
 
@@ -330,46 +327,32 @@ public class controlrt_script : MonoBehaviour
     }
 
 
-    void DrawQuad(Rect position, Color color, Vector2 sizeBox)
-    {
-        Texture2D texture = new Texture2D(1,1);
-        texture.SetPixel(0, 0, color);
-        texture.Apply();
-        GUI.skin.box.normal.background = texture;
-        GUI.Box(position, GUIContent.none);
-    }
 
     bool isTouchingThickPlatform(ref int objectTouched) {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y*1.1f),
-            new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y*1.2f, thickPlatformLayerMask);
+        //RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y*1.1f),
+        //new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y*1.2f, thickPlatformLayerMask);
+        Collider2D collidedFloor = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y/10f), boxCollider.bounds.size*0.95f, 0f, thickPlatformLayerMask);
+        Collider2D collidedWall = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x + boxCollider.bounds.size.x/10f, boxCollider.bounds.center.y), boxCollider.bounds.size*0.95f, 0f, thickPlatformLayerMask);
 
-        float boxColliderCenterX = boxCollider.bounds.center.x;
-        float boxColliderCenterY = boxCollider.bounds.center.y;
-        float boxColliderSizeX = boxCollider.bounds.size.x / 2f;
-        float boxColliderSizeY = boxCollider.bounds.size.y / 2f;
-        float mathLenency = 0.02f;//this gives the math the ability not to be perfect.
-        float detectionLenency = 0.3f;//this gives the detection a bit more time in order to turn the platform back on
-
-
-        if (raycastHit.collider == null)
+        if (collidedFloor == null && collidedWall == null)
         {
             objectTouched = -1;
             return false;
         }
-        else if (((AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) > boxColliderSizeY - detectionLenency) 
-            && (AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) <= boxColliderSizeY + mathLenency)) 
-            && (boxColliderCenterY - raycastHit.point.y > 0)
-            && (AbsoluteValueFloat(boxCollider.bounds.center.x - raycastHit.collider.bounds.center.x) - raycastHit.collider.bounds.size.x/2f - boxColliderSizeX <= 0))
-        {//determines if the ray hit a point below the player
+        else if (collidedFloor != null)//if we are on the floor then the fact we are touching a wall does not matter
+
+        {
+          
             objectTouched = 1; //1 will be floor
         }
-        else if (((AbsoluteValueFloat(raycastHit.point.x - boxColliderCenterX) > boxColliderSizeX - 0.1) && (AbsoluteValueFloat(raycastHit.point.x - boxColliderCenterX) < boxColliderSizeX + 0.1)))
+        else if (collidedWall != null && collidedFloor == null)
         {
             //determines if the ray hit a point next to the player
             objectTouched = 0; //0 will be wall
         }
         else//otherwise the point is above the player
-            objectTouched = 2; // 2 will be ceiling
+            //objectTouched = 2; // 2 will be ceiling, ceiling 
+            Debug.Log("error, unintended interaction in function isTouchingThickPlatform in player controller code.");
 
         return true;
 
@@ -377,49 +360,137 @@ public class controlrt_script : MonoBehaviour
     }
 
 
+    bool isTouchingThinPlatform()
+    {
+        bool returnBool = false;
+        Collider2D[] turnOffArray = new Collider2D[15];
 
-    bool isTouchingThinPlatform()//FWI thin platforms need to be less than 30% player size
-    {//returns true if the object is touching a platform and returns 0 if player is on top of the platform, 1 if player is below platform, 2 if player is next to platform, and -1 if player is not touching anything
-        RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y * 0.9f),
-            new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y/10), 0f, Vector2.down, boxCollider.bounds.size.y * 1.2f + boxCollider.bounds.size.y*0.2f, thinPlatformLayerMask);
-        //can be changed to multi_hit if you use  int return_array_size = Physics2D.BoxCast(center,  bounds, angle, direction, distance, RaycastHit2D[], LayerMask);
+        int numberOfHits = Physics2D.OverlapBoxNonAlloc(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.y*2,boxCollider.bounds.size.y*2), 0, turnOffArray, thinPlatformLayerMask);
+        RaycastHit2D raycastHitTurnOn1 = Physics2D.Raycast(new Vector2(boxCollider.bounds.center.x - boxCollider.bounds.size.x/2f, boxCollider.bounds.center.y), 
+            Vector2.down, boxCollider.bounds.size.y, thinPlatformLayerMask);
+        RaycastHit2D raycastHitTurnOn2 = Physics2D.Raycast(new Vector2(boxCollider.bounds.center.x + boxCollider.bounds.size.x / 2f,boxCollider.bounds.center.y), 
+            Vector2.down, boxCollider.bounds.size.y, thinPlatformLayerMask);
 
-        float boxColliderCenterX = boxCollider.bounds.center.x;
-        float boxColliderCenterY = boxCollider.bounds.center.y;
-        float boxColliderSizeX = boxCollider.bounds.size.x / 2f;
-        float boxColliderSizeY = boxCollider.bounds.size.y / 2f;
-        float mathLenency = 0.06f;
-        float detectionLenency = 0.3f;//this gives the detection a bit more time in order to turn the platform back on
 
-    
-
-            if (raycastHit.collider == null)
+        if (downHold > 0)
+            downHold = downHold - Time.deltaTime;
+        if (inputUD == -1)
         {
-            
-            return false;
+            downHold = 0.15f;
         }
-        else if (((AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) > boxColliderSizeY - detectionLenency) 
-            && (AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) <= boxColliderSizeY + mathLenency)) 
-            && (boxColliderCenterY - raycastHit.point.y > 0)//checks if char is within the correct y range
-            && (AbsoluteValueFloat(boxCollider.bounds.center.x - raycastHit.collider.bounds.center.x) - raycastHit.collider.bounds.size.x / 2f - boxColliderSizeX <= 0)
-            && (inputUD != -1))
-            
-        {//determines if the ray hit a point below the player
 
-            
-            raycastHit.collider.isTrigger = false;
-            return true;
+        for (int i = 0; i < numberOfHits; i++)//this loop turns off the collision of all the platforms collided with
+            turnOffArray[i].isTrigger = true;
+
+        if (downHold <= 0)
+        {//if the player held down within the last 0.15 seconds this is false.
+            if (raycastHitTurnOn1.collider != null)
+            {//checks if there is a platform right under the player, and it's box collider does't overlap with the player, then that platform's collision is turned on
+
+                if ((boxCollider.bounds.center.y - boxCollider.bounds.size.y*5.05f/10f  > raycastHitTurnOn1.point.y) && boxCollider.bounds.center.y > raycastHitTurnOn1.point.y) {
+                    raycastHitTurnOn1.collider.isTrigger = false;
+                    returnBool = true;
+                    
+                }
+            }
+            if (raycastHitTurnOn2.collider != null)
+            {//checks if there is a platform right under the player, and it's box collider does't overlap with the player, then that platform's collision is turned on
+                if ((boxCollider.bounds.center.y - boxCollider.bounds.size.y * 5.05f / 10f > raycastHitTurnOn2.point.y) && boxCollider.bounds.center.y > raycastHitTurnOn2.point.y)
+                {
+                    
+                    raycastHitTurnOn2.collider.isTrigger = false;
+                    returnBool = true;
+                }
+            }
         }
-        raycastHit.collider.isTrigger = true;
-        return false;
 
+        return returnBool;
 
 
     }
 
-      
 
-        bool isAgainstWall() {
+    /*Version 2.0 of isTouchingThinPlatform, comes with a glitch of the player being half way into the floor
+    bool isTouchingThinPlatform() {
+        RaycastHit2D[] turnOffArray = new RaycastHit2D[15];
+        int numberOfHits = Physics2D.BoxCastNonAlloc(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y * 2f),
+            new Vector2(boxCollider.bounds.size.x * 2.5f, boxCollider.bounds.size.y), 0f, Vector2.up, turnOffArray, boxCollider.bounds.size.y * 4f, thinPlatformLayerMask);
+        
+        RaycastHit2D raycastHitTurnOn = Physics2D.BoxCast(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x*0.90f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y/7f, thinPlatformLayerMask);
+
+
+        if (downHold > 0)
+            downHold = downHold - Time.deltaTime;
+
+        if (inputUD == -1)
+        {
+            downHold = 0.15f;
+        }
+
+
+        for (int i = 0; i < numberOfHits; i++)//this loop turns off the collision of all the platforms collided with
+            turnOffArray[i].collider.isTrigger = true;
+        
+        if(downHold <= 0)//if the player held down within the last 0.15 seconds this is false.
+            if (raycastHitTurnOn.collider != null) {//checks if there is a platform right under the player, and it's box collider does't overlap with the player, then that platform's collision is turned on
+
+                if (raycastHitTurnOn.point.y + boxCollider.bounds.size.y/2f <= boxCollider.bounds.center.y+ boxCollider.bounds.size.y/9f) {
+                    raycastHitTurnOn.collider.isTrigger = false;
+                    return true;
+                }
+
+            }
+
+        return false;
+
+
+    }
+    */
+
+    /* 
+     * Version1.0 of isTouchingThinPlatform(this version feels jerky when played
+     bool isTouchingThinPlatform()//FWI thin platforms need to be less than 30% player size
+     {//returns true if the object is touching a platform and returns 0 if player is on top of the platform, 1 if player is below platform, 2 if player is next to platform, and -1 if player is not touching anything
+         RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y * 0.9f),
+             new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y/10), 0f, Vector2.down, boxCollider.bounds.size.y * 1.2f + boxCollider.bounds.size.y*0.2f, thinPlatformLayerMask);
+         //can be changed to multi_hit if you use  int return_array_size = Physics2D.BoxCast(center,  bounds, angle, direction, distance, RaycastHit2D[], LayerMask);
+
+         float boxColliderCenterX = boxCollider.bounds.center.x;
+         float boxColliderCenterY = boxCollider.bounds.center.y;
+         float boxColliderSizeX = boxCollider.bounds.size.x / 2f;
+         float boxColliderSizeY = boxCollider.bounds.size.y / 2f;
+         float mathLenency = 0.06f;
+         float detectionLenency = 0.3f;//this gives the detection a bit more time in order to turn the platform back on
+
+
+
+             if (raycastHit.collider == null)
+         {
+
+             return false;
+         }
+         else if (((AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) > boxColliderSizeY - detectionLenency) 
+             && (AbsoluteValueFloat(boxColliderCenterY - raycastHit.point.y) <= boxColliderSizeY + mathLenency)) 
+             && (boxColliderCenterY - raycastHit.point.y > 0)//checks if char is within the correct y range
+             && (AbsoluteValueFloat(boxCollider.bounds.center.x - raycastHit.collider.bounds.center.x) - raycastHit.collider.bounds.size.x / 2f - boxColliderSizeX <= 0)
+             && (inputUD != -1))
+
+         {//determines if the ray hit a point below the player
+
+
+             raycastHit.collider.isTrigger = false;
+             return true;
+         }
+         raycastHit.collider.isTrigger = true;
+         return false;
+
+
+
+     }
+     */
+
+
+    bool isAgainstWall() {
         float mathLenency = 0.1f;
         Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size + new Vector3(mathLenency, mathLenency, 0f), 0f, wallLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
 
