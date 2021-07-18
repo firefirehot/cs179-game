@@ -258,6 +258,7 @@ public class controlrt_script : MonoBehaviour
                 }
                 facingRight = !facingRight;//records the direction sprite is facing
                 m_SpriteRenderer.flipX = !m_SpriteRenderer.flipX;//flips the sprite
+                dashClock = 0;
                 canAirDash = true;//enable air dash
                 canAirJump = true;//enable double jump 
 
