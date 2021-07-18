@@ -338,7 +338,7 @@ public class controlrt_script : MonoBehaviour
         //RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y*1.1f),
         //new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y*1.2f, thickPlatformLayerMask);
         Collider2D collidedFloor = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y/10f), boxCollider.bounds.size*0.95f, 0f, thickPlatformLayerMask);
-        Collider2D collidedWall = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x + boxCollider.bounds.size.x/10f, boxCollider.bounds.center.y), boxCollider.bounds.size*0.95f, 0f, thickPlatformLayerMask);
+        Collider2D collidedWall = Physics2D.OverlapBox(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x + boxCollider.bounds.size.x / 5f, boxCollider.bounds.size.y*0.95f), 0f, thickPlatformLayerMask);
 
         if (collidedFloor == null && collidedWall == null)
         {
