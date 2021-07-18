@@ -44,13 +44,15 @@ public class controlrt_script : MonoBehaviour
     //dash vars
     private float lastInput = 1;//records the direction of the last LR input(used for dashing and wall jumping)
     private float dashRange = 250f; //changes how far the dash will go
-    private float dashLenency = 0.3f; // this is how much time between button presses the player has in order to dash
+    private float dashLenency = 0.15f; // this is how much time between button presses the player has in order to dash
     private float dashCatcher; // records time between LR button presses. If the player presses the same direction twice in a short amount of time(determined by dashLenency) the player dashes.
     private float dashLock = 0f;//locks out any other input while dashing. when dashLock == 0 user inputs are accepted
     private float dashLockSet = 0.15f;//sets the dash lock to prevent user input for 0.15sec
     private bool canAirDash = true; // locks out dash when false. Alows us to only allow one dash per jump
     private float saveVelocity = 5f;//save's the velocity before a dash so that the player can return to the saved velocity after the dash.
     private float minVelocityAfterDash = 3f;//sets the minimum velocity the player will have after the dash.
+    private float dashCoolDown = 1.2f;//sets how long between dashes
+    private float dashClock = 0f;// while != 0 player can't dash
     /*END OF MOVEMENT VARS*****************************************************************************/
 
     //gets user inputs
@@ -117,13 +119,11 @@ public class controlrt_script : MonoBehaviour
             if (Input.GetKeyDown("w"))
                 inputUD = 1;
             else if (Input.GetKey("s"))
-            {
                 inputUD = -1;
-                
-            }
             else
                 inputUD = 0;
 
+            
 
 
             //***
@@ -169,7 +169,9 @@ public class controlrt_script : MonoBehaviour
             //**
 
 
-            //code that handles LR input animation and variables
+            //code that handles LR input animation and variables and dashing
+            if(dashClock >= 0)//counts down the dash clock
+                dashClock = dashClock - Time.deltaTime;
             if (inputLR == 0)//if we don't detect a LR(left or right) input and want to play idle animation. If we are in idle animation we create a friction force.
             {//changes animation to idle if no input is detected
 
@@ -184,7 +186,7 @@ public class controlrt_script : MonoBehaviour
             }
             else if (inputLR != 0)//we detect LR input and want to decide if we play running animation or dashing animation
             {
-                if ((dashCatcher < dashLenency && dashCatcher > 0.0001 && ((lastInput > 0 && inputLR > 0) || (lastInput < 0 && inputLR < 0))) && canAirDash)//if a second input LR(left or right) is detected within 0.001s->0.3s then we dash
+                if ((dashCatcher < dashLenency && dashCatcher > 0.0001 && ((lastInput > 0 && inputLR > 0) || (lastInput < 0 && inputLR < 0))) && canAirDash && dashClock <= 0)//if a second input LR(left or right) is detected within 0.001s->0.3s then we dash
                 {
                     ani.SetBool("isRunning", false);
                     ani.SetBool("dashing", true);
@@ -279,7 +281,7 @@ public class controlrt_script : MonoBehaviour
                     Debug.Log("error");
 
             dashLock = dashLock - Time.deltaTime;//decrements the dashlock until 0.2 seconds have passed
-            if (dashLock <= 0)//when the dashlock is over this if statment gives the player back their velocity that they had before the dash
+            if (dashLock <= 0)//when the dashlock is over this if statment gives the player back their velocity that they had before the dash and activate dash cooldown
             {
                 if (saveVelocity < -minVelocityAfterDash && saveVelocity > minVelocityAfterDash)
                     rb.velocity = new Vector2(saveVelocity, 0);
@@ -287,6 +289,8 @@ public class controlrt_script : MonoBehaviour
                 {
                     rb.velocity = new Vector2(lastInput * minVelocityAfterDash, 0);
                 }
+
+                dashClock = dashCoolDown;//activate the dash cool down
             }
         }//end of dashlock
 
