@@ -72,6 +72,7 @@ public class controlrt_script : MonoBehaviour
 
     //other used var's that don't have a neat catagory
     private bool facingRight = true; // A boolian value that is true if the player is facing right
+    private float backgroundDistance = 0.5f;//(original distance + moved_distance*backgroundDistance) is the calculation. If backgroundDistance > 1 it moves like forground. If 1 > backgroundDistance > 0 moves like background. Reverse if <0
 
     void Start()
     {
@@ -106,7 +107,7 @@ public class controlrt_script : MonoBehaviour
         }
 
         cameraObject.upDateCamera(transform.position.x, transform.position.y);//sends the player's position to the camera function called upDateCamera. upDateCamera moves then camera to passed position
-        far_object_script.upDateFarObject(transform.position.x, transform.position.y, 2.5f);
+        far_object_script.upDateFarObject(transform.position.x, transform.position.y, backgroundDistance);
 
         if (dashLock <= 0)
         {

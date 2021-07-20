@@ -8,6 +8,9 @@ public class far_object_movement : MonoBehaviour
 
     private float startingX = 0;
     private float startingY = 0;
+    private float playerStartX = 0;
+    private float playerStartY = 0;
+    private bool firstLoopBool = true;
 
     void Start()
     {
@@ -18,9 +21,12 @@ public class far_object_movement : MonoBehaviour
 
     public void upDateFarObject(float xin, float yin, float distance)
     {
-        if (distance <= 0)
-            Debug.Log("DO NOT PASS distance <= 0 to upDateFarObject from far_object_movement script");
-        transform.position = new Vector3(startingX + (xin-startingX)/distance, startingY + (yin-startingY)/distance, transform.position.z);
+        if (firstLoopBool) {
+            playerStartX = xin;
+            playerStartY = yin;
+            firstLoopBool = false;
+        }
+        transform.position = new Vector3(startingX + (xin - playerStartX) *distance, startingY + (yin - playerStartY) *distance, transform.position.z);
     }
 }
 
