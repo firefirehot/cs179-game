@@ -18,6 +18,7 @@ public class controlrt_script : MonoBehaviour
     [SerializeField] private LayerMask trapLayerMask;
     [SerializeField] private LayerMask thickPlatformLayerMask;
     [SerializeField] private LayerMask thinPlatformLayerMask;
+    [SerializeField] private GameObject far_back_object;
 
     //private GameObject hpObject; //current added
     //private Image spikeObjectImage; //current added
@@ -67,6 +68,7 @@ public class controlrt_script : MonoBehaviour
     //Scripts in the form of objects. Used to call functions from those scripts.
     my_hp_script hp_scriptObject;
     cameraScript cameraObject;
+    far_object_movement far_object_script;
 
     //other used var's that don't have a neat catagory
     private bool facingRight = true; // A boolian value that is true if the player is facing right
@@ -80,6 +82,7 @@ public class controlrt_script : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         hp_scriptObject = GameObject.FindGameObjectWithTag("HP Bar").GetComponent<my_hp_script>();
         cameraObject = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraScript>();
+        far_object_script = far_back_object.GetComponent<far_object_movement>();
         //spikeObjectImage = hpObject.GetComponent<Image>();//current added
 
     }
@@ -103,7 +106,7 @@ public class controlrt_script : MonoBehaviour
         }
 
         cameraObject.upDateCamera(transform.position.x, transform.position.y);//sends the player's position to the camera function called upDateCamera. upDateCamera moves then camera to passed position
-
+        far_object_script.upDateFarObject(transform.position.x, transform.position.y, 2.5f);
 
         if (dashLock <= 0)
         {
