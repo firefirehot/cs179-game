@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2918811538223372258}
   - component: {fileID: 4072413139016112630}
+  - component: {fileID: 539416508262830816}
   m_Layer: 0
   m_Name: background_with_perspective
   m_TagString: far_background_object
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2816775098827150823}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8.2, y: 7.79, z: 0}
-  m_LocalScale: {x: 13, y: 13, z: 4.7983}
+  m_LocalScale: {x: 1.77021, y: 1.77021, z: 0.6533845}
   m_Children: []
   m_Father: {fileID: 361806497159058019}
   m_RootOrder: 1
@@ -82,6 +83,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &539416508262830816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2816775098827150823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b09227f3bedb5fd4a8c4dd7bb7010933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7758562236865899771
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +380,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7650274899104592604, guid: 0b68640d30652694eaa917dd1eb5ab2e, type: 3}
+      propertyPath: far_back_object
+      value: 
+      objectReference: {fileID: 2816775098827150823}
     - target: {fileID: 7650274899104592605, guid: 0b68640d30652694eaa917dd1eb5ab2e, type: 3}
       propertyPath: m_Anchor.y
       value: -0.0000000024441462
