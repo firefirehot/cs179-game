@@ -19,6 +19,8 @@ public class controlrt_script : MonoBehaviour
     [SerializeField] private LayerMask thickPlatformLayerMask;
     [SerializeField] private LayerMask thinPlatformLayerMask;
     [SerializeField] private GameObject far_back_object;
+    [SerializeField] private GameObject stepSound_object;
+    private AudioSource stepSound;
 
     //private GameObject hpObject; //current added
     //private Image spikeObjectImage; //current added
@@ -26,7 +28,7 @@ public class controlrt_script : MonoBehaviour
     private BoxCollider2D boxCollider;
     SpriteRenderer m_SpriteRenderer; //empty sprite render container
     private Animator ani;// empty animator container, animator decides which animation to play
-    
+
     /*MOVEMENT VARS***********************************************************************************/
     //jumps, walljumps
     private float jumpHeight = 7.5f;//changes the height of the jump by giving it more velocity
@@ -34,8 +36,8 @@ public class controlrt_script : MonoBehaviour
     private float wallJumpVelocityY = 5f; // changes velocity of player after wall Jumping
     private bool canAirJump = true;//set to true when u want to enable a second jump along with prepDoubleJump
     private float fallSpeed = 10f; // changes the player's fall rate while not touching ground or platforms
-    //private float maxAirSpeed = 7f; // sets player max speed in air
-   // private float airControl = 0.5f; // reduces the player's ability to control velocity in air
+                                   //private float maxAirSpeed = 7f; // sets player max speed in air
+                                   // private float airControl = 0.5f; // reduces the player's ability to control velocity in air
 
     //running speed vars
     private float maxSpeed = 5f; //sets a limit in how much velocity the player can add to themselves using the LR inputs
@@ -65,6 +67,9 @@ public class controlrt_script : MonoBehaviour
     private float setInvincibility = 1.5f;
     private float invincibilityAfterHit = 0;
 
+    //sound variables
+    //private float stepTime = 0f;
+
     //Scripts in the form of objects. Used to call functions from those scripts.
     my_hp_script hp_scriptObject;
     cameraScript cameraObject;
@@ -78,12 +83,14 @@ public class controlrt_script : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>(); // assigns empty container with the actual component
-        facingRight = true; 
+        facingRight = true;
         ani = GetComponent<Animator>(); // assigns empty container with the actual component
         boxCollider = GetComponent<BoxCollider2D>();
         hp_scriptObject = GameObject.FindGameObjectWithTag("HP Bar").GetComponent<my_hp_script>();
         cameraObject = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraScript>();
         far_object_script = far_back_object.GetComponent<far_object_movement>();
+        stepSound = stepSound_object.GetComponent<AudioSource>();
+
         //spikeObjectImage = hpObject.GetComponent<Image>();//current added
 
     }
@@ -127,7 +134,7 @@ public class controlrt_script : MonoBehaviour
             else
                 inputUD = 0;
 
-            
+
 
 
             //***
@@ -139,6 +146,7 @@ public class controlrt_script : MonoBehaviour
 
             if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)
             {
+                
                 rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0f);// accelerates the player if they give a LR input
                 if (rb.velocity.x > maxSpeed || rb.velocity.x < -maxSpeed)
                     rb.velocity = new Vector2(inputLR * maxSpeed - 0.01f, rb.velocity.y);
@@ -174,7 +182,7 @@ public class controlrt_script : MonoBehaviour
 
 
             //code that handles LR input animation and variables and dashing
-            if(dashClock >= 0)//counts down the dash clock
+            if (dashClock >= 0)//counts down the dash clock
                 dashClock = dashClock - Time.deltaTime;
             if (inputLR == 0)//if we don't detect a LR(left or right) input and want to play idle animation. If we are in idle animation we create a friction force.
             {//changes animation to idle if no input is detected
@@ -183,8 +191,8 @@ public class controlrt_script : MonoBehaviour
                 if (groundedBool || (platformBool && interactionStatus == 1))//if we are on the floor we want to come to a stop since we no input is being given
                 {
                     ani.SetBool("isRunning", false);
-                    
-                     rb.velocity = new Vector2(rb.velocity.x + (-rb.velocity.x * Time.deltaTime * slowSpeed), rb.velocity.y);
+
+                    rb.velocity = new Vector2(rb.velocity.x + (-rb.velocity.x * Time.deltaTime * slowSpeed), rb.velocity.y);
                 }
 
             }
@@ -201,6 +209,7 @@ public class controlrt_script : MonoBehaviour
                 else//if we don't dash we are running at this point
                 {
                     ani.SetBool("isRunning", true);
+                    //soundPlayer(1);
                     saveVelocity = rb.velocity.x;
                 }
                 lastInput = inputLR;
@@ -281,7 +290,7 @@ public class controlrt_script : MonoBehaviour
                     rb.MovePosition(new Vector2(transform.position.x + Time.deltaTime * dashRange, transform.position.y));
                 else if (lastInput < 0)
                     rb.MovePosition(new Vector2(transform.position.x - Time.deltaTime * dashRange, transform.position.y));
-                    //transform.position = transform.position + new Vector3(-Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking left
+                //transform.position = transform.position + new Vector3(-Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking left
                 else
                     Debug.Log("error");
 
@@ -322,6 +331,36 @@ public class controlrt_script : MonoBehaviour
             return mathIn;
         }
         return mathIn * -1f;
+    }
+    /*
+    void soundPlayer(int state)
+    {
+        /*switch (state)//transition 
+        {
+            case 1:
+                
+                break;
+
+
+
+        }
+        switch (state)//states
+        {
+            case 1:
+                stepTime = stepTime + Time.deltaTime;
+                if (stepTime > 0.25*5f/AbsoluteValueFloat(rb.velocity.x)) {
+                    stepSound.Play();
+                    stepTime = 0;
+                }
+                break;
+
+
+        }
+    }
+*/
+
+    void playStep() {
+        stepSound.Play();
     }
 
 
