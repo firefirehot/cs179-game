@@ -236,9 +236,17 @@ PrefabInstance:
       propertyPath: far_back_object
       value: 
       objectReference: {fileID: 414422025}
+    - target: {fileID: 361806497159058022, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
+      propertyPath: jumpSound_object
+      value: 
+      objectReference: {fileID: 2098359846}
     - target: {fileID: 361806498119288478, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
       propertyPath: grappleToAll
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 566387656164836684, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
+      propertyPath: Priority
+      value: 86
       objectReference: {fileID: 0}
     - target: {fileID: 1796995689509065628, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
       propertyPath: m_RootOrder
@@ -296,9 +304,17 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.8134078
       objectReference: {fileID: 0}
+    - target: {fileID: 7191891039474497975, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f8510b6b997ab97449e06f9a692b8f69, type: 3}
     - target: {fileID: 7758562236865899771, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
       propertyPath: m_Name
       value: Game_glue
+      objectReference: {fileID: 0}
+    - target: {fileID: 9058207519136364668, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
+      propertyPath: m_Volume
+      value: 0.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
@@ -14036,3 +14052,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fcb610e60b62574bad2ea41f3cae555, type: 3}
+--- !u!1 &2098359846 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5298955052907070205, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
+  m_PrefabInstance: {fileID: 103001039}
+  m_PrefabAsset: {fileID: 0}

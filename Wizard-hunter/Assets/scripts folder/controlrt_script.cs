@@ -21,6 +21,10 @@ public class controlrt_script : MonoBehaviour
     [SerializeField] private GameObject far_back_object;
     [SerializeField] private GameObject stepSound_object;
     private AudioSource stepSound;
+    [SerializeField] private GameObject dashSound_object;
+    private AudioSource dashSound;
+    [SerializeField] private GameObject jumpSound_object;
+    private AudioSource jumpSound;
 
     //private GameObject hpObject; //current added
     //private Image spikeObjectImage; //current added
@@ -90,6 +94,8 @@ public class controlrt_script : MonoBehaviour
         cameraObject = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraScript>();
         far_object_script = far_back_object.GetComponent<far_object_movement>();
         stepSound = stepSound_object.GetComponent<AudioSource>();
+        dashSound = dashSound_object.GetComponent<AudioSource>();
+        jumpSound = jumpSound_object.GetComponent<AudioSource>();
 
         //spikeObjectImage = hpObject.GetComponent<Image>();//current added
 
@@ -332,35 +338,18 @@ public class controlrt_script : MonoBehaviour
         }
         return mathIn * -1f;
     }
-    /*
-    void soundPlayer(int state)
+
+    void playDash()
     {
-        /*switch (state)//transition 
-        {
-            case 1:
-                
-                break;
-
-
-
-        }
-        switch (state)//states
-        {
-            case 1:
-                stepTime = stepTime + Time.deltaTime;
-                if (stepTime > 0.25*5f/AbsoluteValueFloat(rb.velocity.x)) {
-                    stepSound.Play();
-                    stepTime = 0;
-                }
-                break;
-
-
-        }
+        dashSound.Play();
     }
-*/
 
     void playStep() {
         stepSound.Play();
+    }
+    void playJump()
+    {
+        jumpSound.Play();
     }
 
 
