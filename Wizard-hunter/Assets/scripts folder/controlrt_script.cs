@@ -8,6 +8,7 @@ using UnityEngine;
 //crdit to youtube video by Coding With Unity https://www.youtube.com/watch?v=VHYke1HrlMY
 //credit to youtube video by Brackeys https://www.youtube.com/watch?v=gAB64vfbrhI and https://www.youtube.com/watch?v=VbZ9_C4-Qbo
 //credit to youtube video by Code Monkey https://www.youtube.com/watch?v=c3iEl5AwUF8&t=659s
+//credit to forum https://answers.unity.com/questions/958370/how-to-change-alpha-of-a-sprite.html
 
 public class controlrt_script : MonoBehaviour
 {//
@@ -25,6 +26,8 @@ public class controlrt_script : MonoBehaviour
     private AudioSource dashSound;
     [SerializeField] private GameObject jumpSound_object;
     private AudioSource jumpSound;
+    [SerializeField] private GameObject hurtSound_object;
+    private AudioSource hurtSound;
 
     //private GameObject hpObject; //current added
     //private Image spikeObjectImage; //current added
@@ -67,12 +70,13 @@ public class controlrt_script : MonoBehaviour
     private float inputUD;//current up or down input. NOT to be confused with "Input" which is defined in unity.
     private float downHold;//if player presses down arrow key we want to "hold" it for a couple frames so that they fall through platforms
 
-    //invinsibility variables
-    private float setInvincibility = 1.5f;
+    //Being damaged/after damage variables
+    private float setInvincibility = 1.5f;//sets invinicibility's time
     private float invincibilityAfterHit = 0;
+    private Color playerColor;
+    private float flickerSpeed = 0.2f;//higher flicker speed means slower flickers
+    private float flickerCurrent = 0f;
 
-    //sound variables
-    //private float stepTime = 0f;
 
     //Scripts in the form of objects. Used to call functions from those scripts.
     my_hp_script hp_scriptObject;
@@ -81,7 +85,8 @@ public class controlrt_script : MonoBehaviour
 
     //other used var's that don't have a neat catagory
     private bool facingRight = true; // A boolian value that is true if the player is facing right
-    private float backgroundDistance = 0.5f;//(original distance + moved_distance*backgroundDistance) is the calculation. If backgroundDistance > 1 it moves like forground. If 1 > backgroundDistance > 0 moves like background. Reverse if <0
+    private float backgroundDistance = 0.2f;//(original distance + moved_distance*backgroundDistance) is the calculation. If backgroundDistance > 1 it moves like forground. If 1 > backgroundDistance > 0 moves like background. Reverse if <0
+    
 
     void Start()
     {
@@ -96,6 +101,8 @@ public class controlrt_script : MonoBehaviour
         stepSound = stepSound_object.GetComponent<AudioSource>();
         dashSound = dashSound_object.GetComponent<AudioSource>();
         jumpSound = jumpSound_object.GetComponent<AudioSource>();
+        hurtSound = hurtSound_object.GetComponent<AudioSource>();
+        playerColor = m_SpriteRenderer.GetComponent<SpriteRenderer>().color;
 
         //spikeObjectImage = hpObject.GetComponent<Image>();//current added
 
@@ -107,7 +114,7 @@ public class controlrt_script : MonoBehaviour
 
     void Update()
     {
-
+        //Block of code that handles collisions
         bool groundedBool = isGrounded();//ground bool is true if player is against an object labled ground
         bool wallBool = isAgainstWall();//wallBool is true if player is against an object labeled wall
         int interactionStatus = 0;
@@ -118,12 +125,29 @@ public class controlrt_script : MonoBehaviour
             if (platformBool == true)
                 interactionStatus = 1;
         }
+        //***
 
+        //**block of code that controlls visual aspects of the game like the camera's position, background object's movement, and the player's color after being hit
         cameraObject.upDateCamera(transform.position.x, transform.position.y);//sends the player's position to the camera function called upDateCamera. upDateCamera moves then camera to passed position
         far_object_script.upDateFarObject(transform.position.x, transform.position.y, backgroundDistance);
+        if (invincibilityAfterHit > 0) {
+            
+            if (flickerCurrent <= 0 || invincibilityAfterHit <= 0.3f)//the player will be reset to the normal color for flicker effect or if the flicker effect is about to end
+            {
+                GetComponent<SpriteRenderer>().color = playerColor;
+                flickerCurrent = flickerSpeed;
+            }
+            else {
+                GetComponent<SpriteRenderer>().color = new Color(playerColor.r, playerColor.g, playerColor.b, playerColor.a - 0.75f * flickerCurrent / flickerSpeed);//player picture drops to a max of 0.75% of it's color
+                flickerCurrent = flickerCurrent - Time.deltaTime;
+            }
+
+        }
+        //***
 
         if (dashLock <= 0)
         {
+
             ani.SetBool("dashing", false);
             //get user input code block
             if (Input.GetKey("d"))
@@ -312,7 +336,8 @@ public class controlrt_script : MonoBehaviour
 
                 dashClock = dashCoolDown;//activate the dash cool down
             }
-        }//end of dashlock
+        }
+        //***end of dashlock
 
 
         //code that handles invincibility after being hit and player touching something that damages them by half of a heart.
@@ -324,9 +349,10 @@ public class controlrt_script : MonoBehaviour
         else if (isTouchingTrap())
         {
             hp_scriptObject.halfHeartDamage();
+            hurtSound.Play();
             invincibilityAfterHit = setInvincibility;//sets how long the player is invisible for after being hit
         }
-        //**
+        //***
 
     }//end of update
 
@@ -351,6 +377,8 @@ public class controlrt_script : MonoBehaviour
     {
         jumpSound.Play();
     }
+
+
 
 
     bool isGrounded() {//credit to Code Monkey
