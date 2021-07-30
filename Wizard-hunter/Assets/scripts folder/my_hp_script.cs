@@ -32,7 +32,7 @@ public class my_hp_script : MonoBehaviour
         halfHearts = Resources.Load<Sprite>("heart_Images/half_heart");
         
     }
-
+    
 
 
     public void halfHeartDamage() {//I should change this to a switch statement but im wayyyyy to lazy to actually do it instead of typing all this long, run-on-sentence out.
