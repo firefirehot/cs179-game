@@ -53,7 +53,7 @@ public class controlrt_script : MonoBehaviour
 
     //dash vars
     private float lastInput = 1;//records the direction of the last LR input(used for dashing and wall jumping)
-    private float dashRange = 250f; //changes how far the dash will go
+    private float dashRange = 40f; //changes how far the dash will go
     private float dashLenency = 0.15f; // this is how much time between button presses the player has in order to dash
     private float dashCatcher; // records time between LR button presses. If the player presses the same direction twice in a short amount of time(determined by dashLenency) the player dashes.
     private float dashLock = 0f;//locks out any other input while dashing. when dashLock == 0 user inputs are accepted
@@ -317,9 +317,9 @@ public class controlrt_script : MonoBehaviour
             if (!wallBool && !(platformBool && interactionStatus == 0))//rb.MovePosition will prevent dashing from moving through walls but it is glitched. Needs further fixing
                 if (lastInput > 0)
                     //transform.position = transform.position + new Vector3(Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking right
-                    rb.MovePosition(new Vector2(transform.position.x + Time.deltaTime * dashRange, transform.position.y));
+                    rb.MovePosition(new Vector2(transform.position.x + Time.fixedDeltaTime * dashRange, transform.position.y));
                 else if (lastInput < 0)
-                    rb.MovePosition(new Vector2(transform.position.x - Time.deltaTime * dashRange, transform.position.y));
+                    rb.MovePosition(new Vector2(transform.position.x - Time.fixedDeltaTime * dashRange, transform.position.y));
                 //transform.position = transform.position + new Vector3(-Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking left
                 else
                     Debug.Log("error");
