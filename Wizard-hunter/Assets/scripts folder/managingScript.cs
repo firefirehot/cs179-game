@@ -6,11 +6,12 @@ using UnityEngine;
 public class managingScript : MonoBehaviour
 {
     private bool playerDead;
+    private bool playerWins;
 
 
     void Start() {
         playerDead = false;
-
+        playerWins = false;
     }
     public void nextLevel() {
 
@@ -25,18 +26,27 @@ public class managingScript : MonoBehaviour
             playerDead = true;
             SceneManager.LoadScene("testingDeath");
         }
-    } 
+    }
+    public void playerWon()
+    {
+        if (playerWins == false)
+        {
+            Debug.Log("testingDeath");
+            playerWins = true;
+            SceneManager.LoadScene("testingWin");
+        }
+    }
 
     //void Start()
-   // {
-        
+    // {
+
     //}
 
-    
+
 
     // Update is called once per frame
-   // void Update()
-   // {
-        
-   // }
+    // void Update()
+    // {
+
+    // }
 }

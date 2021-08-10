@@ -8,7 +8,6 @@ public class MainMenu : MonoBehaviour
     //Quit function
     public void Quit()
     {
-        Debug.Log("QUIT!");
         Application.Quit();
     }
 }

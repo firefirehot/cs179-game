@@ -920,6 +920,10 @@ PrefabInstance:
       propertyPath: stepSound_object
       value: 
       objectReference: {fileID: 6055884208399345636}
+    - target: {fileID: 7650274899104592604, guid: 0b68640d30652694eaa917dd1eb5ab2e, type: 3}
+      propertyPath: wizardLayerMask.m_Bits
+      value: 16384
+      objectReference: {fileID: 0}
     - target: {fileID: 7650274899104592605, guid: 0b68640d30652694eaa917dd1eb5ab2e, type: 3}
       propertyPath: m_Anchor.y
       value: -0.0000000024441462
