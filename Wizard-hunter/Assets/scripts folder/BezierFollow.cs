@@ -20,7 +20,7 @@ public class BezierFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        routeToGo = routes.Length - 1;
+        routeToGo = 0;
         tParam = 0f;
         speedModifier = 0.25f;
         coroutineAllowed = true;
@@ -58,7 +58,7 @@ public class BezierFollow : MonoBehaviour
 
         routeToGo += 1;
 
-        if (routeToGo > routes.Length - 1)
+        if (routeToGo > routes.Length - 1)//change this if statment content to determine how the wizard behaves at the end of the route
         {
             routeToGo = 0;
         }
