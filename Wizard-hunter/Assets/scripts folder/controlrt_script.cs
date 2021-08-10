@@ -17,10 +17,12 @@ public class controlrt_script : MonoBehaviour
     [SerializeField] private LayerMask platformLayerMask;
     [SerializeField] private LayerMask wallLayerMask;
     [SerializeField] private LayerMask trapLayerMask;
+    [SerializeField] private LayerMask wizardLayerMask;
     [SerializeField] private LayerMask thickPlatformLayerMask;
     [SerializeField] private LayerMask thinPlatformLayerMask;
     [SerializeField] private GameObject far_back_object;
     [SerializeField] private GameObject stepSound_object;
+
     private AudioSource stepSound;
     [SerializeField] private GameObject dashSound_object;
     private AudioSource dashSound;
@@ -117,6 +119,9 @@ public class controlrt_script : MonoBehaviour
         //Block of code that handles collisions
         bool groundedBool = isGrounded();//ground bool is true if player is against an object labled ground
         bool wallBool = isAgainstWall();//wallBool is true if player is against an object labeled wall
+        if (isTouchingWizard()) {
+            FindObjectOfType<managingScript>().playerWon();
+        }
         int interactionStatus = 0;
         bool platformBool = isTouchingThickPlatform(ref interactionStatus);//platform bool is true if we are touching a platform, interactionStatus is 0 for walls, 1 for floors, 2 for ceiling
         if (platformBool != true)
@@ -390,6 +395,14 @@ public class controlrt_script : MonoBehaviour
         //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.05f, 0f, Vector2.down, 0f, trapLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
  
         Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size, 0f, trapLayerMask);
+        return collidedPlatform != null;//returns true if it collided, false if it didn't
+    }
+
+    bool isTouchingWizard()
+    {
+        //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.05f, 0f, Vector2.down, 0f, trapLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
+
+        Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size, 0f, wizardLayerMask);
         return collidedPlatform != null;//returns true if it collided, false if it didn't
     }
 

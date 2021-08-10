@@ -21149,8 +21149,8 @@ GameObject:
   - component: {fileID: 565020445}
   - component: {fileID: 565020449}
   - component: {fileID: 565020448}
-  m_Layer: 13
-  m_Name: PlaceholderWiz
+  m_Layer: 14
+  m_Name: Wizard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
