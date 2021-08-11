@@ -354,6 +354,7 @@ public class controlrt_script : MonoBehaviour
         else if (isTouchingTrap())
         {
             hp_scriptObject.halfHeartDamage();
+            rb.velocity = new Vector2(-lastInput * wallJumpVelocityX/2f, wallJumpVelocityY/4f);
             hurtSound.Play();
             invincibilityAfterHit = setInvincibility;//sets how long the player is invisible for after being hit
         }

@@ -8,6 +8,7 @@ public class fireball_shooter : MonoBehaviour
 
     [SerializeField] private GameObject fireballObject;
     [SerializeField] private LayerMask playerLayerMask;
+    [SerializeField] private LayerMask unactivatedTrapLayerMask;
     [SerializeField] private float distToStartFireing;
     [SerializeField] private float fireBallFireRate;
     [SerializeField] private float fireBallSpeed;
@@ -33,7 +34,13 @@ public class fireball_shooter : MonoBehaviour
 
     void fireBallController() {
 
+        /*RaycastHit2D[] turnOffArray = new RaycastHit2D[15];
+        int numberOfHits = Physics2D.BoxCastNonAlloc(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y * 2f),
+            new Vector2(boxCollider.bounds.size.x * 2.5f, boxCollider.bounds.size.y), 0f, Vector2.up, turnOffArray, boxCollider.bounds.size.y * 4f, thinPlatformLayerMask);
+        */
+
         RaycastHit2D raycastHit = Physics2D.BoxCast(transform.position, new Vector2(boxCollider.bounds.size.x, distToStartFireing), 0f, Vector2.left, distToStartFireing, playerLayerMask);//detects the player in a square left of the wizard that is distToStartFireing in length
+
 
         if (raycastHit.collider != null)//if player detected
         {
@@ -48,6 +55,13 @@ public class fireball_shooter : MonoBehaviour
         else
         {
             timeToNextFireBall = fireBallFireRate;//if player is out of range then reset the time to next fireball
+
+            //if player outside of fire ball range he starts to activate traps instead
+            RaycastHit2D unactivatedTrapRaycastHit = Physics2D.BoxCast(transform.position, new Vector2(boxCollider.bounds.size.x, distToStartFireing*2f), 0f, Vector2.left, distToStartFireing*0.6f, unactivatedTrapLayerMask);//detect unactivated traps
+            if (unactivatedTrapRaycastHit.collider != null)
+            {
+                unactivatedTrapRaycastHit.transform.gameObject.layer = 9;//if unactivatedTrap detected then we change it's layer to trap. The trap itself will handle what it needs to do to "activate"
+            }
         }
 
     }//
