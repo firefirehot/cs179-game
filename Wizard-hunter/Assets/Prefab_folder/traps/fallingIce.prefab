@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5737331817608918923}
   m_Layer: 9
   m_Name: fallingIce
-  m_TagString: Untagged
+  m_TagString: general_traps
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

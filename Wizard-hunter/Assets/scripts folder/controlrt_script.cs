@@ -119,6 +119,7 @@ public class controlrt_script : MonoBehaviour
         //Block of code that handles collisions
         bool groundedBool = isGrounded();//ground bool is true if player is against an object labled ground
         bool wallBool = isAgainstWall();//wallBool is true if player is against an object labeled wall
+        string isTouchingTrapReturnString = isTouchingTrap();
         if (isTouchingWizard()) {
             FindObjectOfType<managingScript>().playerWon();
         }
@@ -349,9 +350,11 @@ public class controlrt_script : MonoBehaviour
         if (invincibilityAfterHit > 0f)
         {
             invincibilityAfterHit = invincibilityAfterHit - Time.deltaTime;
+            if(isTouchingTrapReturnString == "firewall")
+                rb.velocity = new Vector2(-lastInput * wallJumpVelocityX / 2f, wallJumpVelocityY / 4f);
 
         }
-        else if (isTouchingTrap())
+        else if (isTouchingTrapReturnString != "no")
         {
             hp_scriptObject.halfHeartDamage();
             rb.velocity = new Vector2(-lastInput * wallJumpVelocityX/2f, wallJumpVelocityY/4f);
@@ -392,11 +395,17 @@ public class controlrt_script : MonoBehaviour
         return raycastHit.collider != null;//returns true if it collided, false if it didn't
     }
 
-    bool isTouchingTrap() {
+    string isTouchingTrap() {
         //RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size*1.05f, 0f, Vector2.down, 0f, trapLayerMask);// casts ray with (center of player, player collider size, rotation, direction, added size to detect, layers to hit)
  
         Collider2D collidedPlatform = Physics2D.OverlapBox(boxCollider.bounds.center, boxCollider.bounds.size, 0f, trapLayerMask);
-        return collidedPlatform != null;//returns true if it collided, false if it didn't
+        //return collidedPlatform != null;//returns true if it collided, false if it didn't
+        if (collidedPlatform != null)
+        {
+            return collidedPlatform.gameObject.tag;
+        }
+        else
+            return "no";
     }
 
     bool isTouchingWizard()

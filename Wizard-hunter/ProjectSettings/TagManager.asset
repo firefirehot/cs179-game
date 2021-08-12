@@ -7,6 +7,8 @@ TagManager:
   - Spike
   - HP Bar
   - far_background_object
+  - firewall
+  - general_traps
   layers:
   - Default
   - TransparentFX

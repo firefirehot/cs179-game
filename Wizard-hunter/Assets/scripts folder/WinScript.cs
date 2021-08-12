@@ -9,7 +9,7 @@ public class WinScript : MonoBehaviour
     public void restartGame()
     {
         SceneManager.LoadScene(0);
-        Debug.Log("yes");
+        
     }
 
 

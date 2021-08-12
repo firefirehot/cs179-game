@@ -12,7 +12,7 @@ public class unactivatedTrapScript : MonoBehaviour
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         trapColor = m_SpriteRenderer.GetComponent<SpriteRenderer>().color;
-
+        GetComponent<SpriteRenderer>().color = new Color(trapColor.r, trapColor.g, trapColor.b, 0);//makes trap invisible at the staart
     }
 
     // Update is called once per frame
