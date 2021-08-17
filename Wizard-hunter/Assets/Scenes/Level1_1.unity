@@ -23013,14 +23013,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 361806497159058019, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -4.44
-      objectReference: {fileID: 0}
-    - target: {fileID: 361806497159058019, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.8578215
-      objectReference: {fileID: 0}
     - target: {fileID: 1796995689509065628, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -23065,25 +23057,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4766682051903314170, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: m_Volume
-      value: 0.64
-      objectReference: {fileID: 0}
-    - target: {fileID: 7191891039474497975, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: m_audioClip
-      value: 
-      objectReference: {fileID: 8300000, guid: f8510b6b997ab97449e06f9a692b8f69, type: 3}
     - target: {fileID: 7758562236865899771, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
       propertyPath: m_Name
       value: Game_glue
-      objectReference: {fileID: 0}
-    - target: {fileID: 9058207519136364668, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: Priority
-      value: 115
-      objectReference: {fileID: 0}
-    - target: {fileID: 9058207519136364668, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
-      propertyPath: m_Volume
-      value: 0.709
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36fe13ee11fd0724db688edd1154b917, type: 3}
