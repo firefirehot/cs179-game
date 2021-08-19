@@ -30,6 +30,8 @@ public class MusicHandler : MonoBehaviour
         }
     }
 
+
+
     // Pauses and unpauses the Music
     public void Pause(){
         if(!isPaused){
