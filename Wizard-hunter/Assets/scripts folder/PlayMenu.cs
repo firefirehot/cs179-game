@@ -28,4 +28,9 @@ public class PlayMenu : MonoBehaviour
     {
         Debug.Log("TODO PlayGame2_2");
     }
+
+    public void tutorialScene()
+    {
+        SceneManager.LoadScene(5);
+    }
 }
