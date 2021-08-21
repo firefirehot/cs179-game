@@ -48,8 +48,9 @@ public class controlrt_script : MonoBehaviour
                                    //private float maxAirSpeed = 7f; // sets player max speed in air
                                    // private float airControl = 0.5f; // reduces the player's ability to control velocity in air
 
-    //running speed vars
+    //speed vars
     private float maxSpeed = 5f; //sets a limit in how much velocity the player can add to themselves using the LR inputs
+    private float maxSpeedInAir = 10f;//sets limit on player x velocity in air
     private float playerAcceleration = 8f; //determines how fast the player will accelerate
     private float slowSpeed = 7f; // changes how fast the player will slow down due to touching a floor or platform(FWI RigidBody2D friction is also slowing the player so slowSpeed == 0 does not mean the player will never stop)
 
@@ -180,14 +181,19 @@ public class controlrt_script : MonoBehaviour
 
             //player LR input turns into movement here.
 
-            if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)
+            if (rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration < maxSpeed && rb.velocity.x + inputLR * Time.deltaTime * playerAcceleration > -maxSpeed)//if player is below max speed we can let the input accelerate the player
             {
-                
                 rb.velocity = rb.velocity + new Vector2(inputLR * Time.deltaTime * playerAcceleration, 0f);// accelerates the player if they give a LR input
-                if (rb.velocity.x > maxSpeed || rb.velocity.x < -maxSpeed)
-                    rb.velocity = new Vector2(inputLR * maxSpeed - 0.01f, rb.velocity.y);
             }
-
+            if ((rb.velocity.x > maxSpeed || rb.velocity.x < -maxSpeed) && (isGrounded() || (platformBool && interactionStatus == 1)))//prevents player from exceeding max speed in the floor
+                rb.velocity = new Vector2(inputLR * maxSpeed - 0.01f, rb.velocity.y);
+            if ((rb.velocity.x > maxSpeedInAir || rb.velocity.x < -maxSpeedInAir) && !(isGrounded() || (platformBool && interactionStatus == 1)))//prevents player from exceeding maxSpeedInAir while in the air
+            {
+                if(rb.velocity.x > 0)
+                    rb.velocity = new Vector2(maxSpeedInAir - 0.01f, rb.velocity.y);
+                if(rb.velocity.x < 0)
+                    rb.velocity = new Vector2(-maxSpeedInAir + 0.01f, rb.velocity.y);
+            }
 
             //**
 
@@ -289,17 +295,17 @@ public class controlrt_script : MonoBehaviour
 
 
             //code that handles wall jumping
-            if (((wallBool || (platformBool && interactionStatus == 0)) && !groundedBool && inputUD == 1))//activates if player is against a wall and is not on the floor and the player pressed up. This will overwrite any velocity the player had before.
+            if (((wallBool || (platformBool && (interactionStatus == 2 || interactionStatus == 3))) && !groundedBool && inputUD == 1))//activates if player is against a wall and is not on the floor and the player pressed up. This will overwrite any velocity the player had before.
             {
 
                 inputUD = 0;
-                if (lastInput > 0)
+                if (interactionStatus == 2)
                 {
                     rb.velocity = new Vector2(-wallJumpVelocityX, wallJumpVelocityY);//gives player a new velocity of -4x and 3y after wall jumping
                     ani.SetTrigger("wallJump"); //wall jump animation plays
 
                 }
-                if (lastInput < 0)
+                if (interactionStatus == 3)
                 {
                     rb.velocity = new Vector2(wallJumpVelocityX, wallJumpVelocityY); //gives player a new velocity of 4x and 3y after wall jumping
                     //ani.SetTrigger("wallJump_unflipped");//flipped version of the wall jump animation plays
@@ -320,7 +326,7 @@ public class controlrt_script : MonoBehaviour
         }
         else if (dashLock > 0)//code that handles dashing
         {
-            if (!wallBool && !(platformBool && interactionStatus == 0))//rb.MovePosition will prevent dashing from moving through walls but it is glitched. Needs further fixing
+            if (!wallBool && !(platformBool && (interactionStatus == 2 || interactionStatus == 3)))//rb.MovePosition will prevent dashing from moving through walls but it is glitched. Needs further fixing
                 if (lastInput > 0)
                     //transform.position = transform.position + new Vector3(Time.deltaTime * dashRange, 0, 0);//this is the dash movement if looking right
                     rb.MovePosition(new Vector2(transform.position.x + Time.fixedDeltaTime * dashRange, transform.position.y));
@@ -419,12 +425,11 @@ public class controlrt_script : MonoBehaviour
 
 
     bool isTouchingThickPlatform(ref int objectTouched) {
-        //RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y + boxCollider.bounds.size.y*1.1f),
-        //new Vector2(boxCollider.bounds.size.x * 1.2f, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y*1.2f, thickPlatformLayerMask);
+
+        /*
         Collider2D collidedFloor = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y/10f), boxCollider.bounds.size*0.95f, 0f, thickPlatformLayerMask);
         Collider2D collidedWall = Physics2D.OverlapBox(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x + boxCollider.bounds.size.x / 5f, boxCollider.bounds.size.y*0.95f), 0f, thickPlatformLayerMask);
-
-        if (collidedFloor == null && collidedWall == null)
+         if (collidedFloor == null && collidedWall == null)
         {
             objectTouched = -1;
             return false;
@@ -444,6 +449,37 @@ public class controlrt_script : MonoBehaviour
             //objectTouched = 2; // 2 will be ceiling, ceiling 
             Debug.Log("error, unintended interaction in function isTouchingThickPlatform in player controller code.");
 
+        return true;*/
+
+        Collider2D collidedFloor = Physics2D.OverlapBox(new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.center.y - boxCollider.bounds.size.y / 10f), boxCollider.bounds.size * 0.95f, 0f, thickPlatformLayerMask);//checks for floor
+        RaycastHit2D raycastHitRightWall = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size * 0.9f, 0f, Vector2.right, boxCollider.bounds.size.x*0.1f, thickPlatformLayerMask);//checks for right wall 
+        RaycastHit2D raycastHitLeftWall = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size * 0.9f, 0f, Vector2.left, boxCollider.bounds.size.x * 0.1f, thickPlatformLayerMask);//checks for left wall
+        if (collidedFloor == null && raycastHitRightWall.collider == null && raycastHitLeftWall.collider == null)
+        {
+            objectTouched = -1;//nothing touched
+            return false;
+        }
+        else if (collidedFloor != null)
+        {
+            objectTouched = 1; //1 will be floor
+        }
+        else if (raycastHitRightWall.collider != null && raycastHitLeftWall.collider != null)//if both right and left wall touched
+        {
+            if (raycastHitRightWall.distance >= raycastHitLeftWall.distance)
+                objectTouched = 2;//right wall closer
+            else
+                objectTouched = 3;//left wall closer
+        }
+        else if (raycastHitRightWall.collider != null) {
+            objectTouched = 2;//right wall
+        }
+        else if (raycastHitLeftWall.collider != null)
+        {
+            objectTouched = 3;//left wall
+        }
+        else
+            Debug.Log("error, unintended interaction in function isTouchingThickPlatform in player controller code.");
+        
         return true;
 
 
