@@ -9,6 +9,7 @@ TagManager:
   - far_background_object
   - firewall
   - general_traps
+  - RespawnSpot
   layers:
   - Default
   - TransparentFX
@@ -26,7 +27,7 @@ TagManager:
   - Foreground
   - Wizard
   - Unactivated Traps
-  - 
+  - Respawn Points
   - 
   - 
   - 
