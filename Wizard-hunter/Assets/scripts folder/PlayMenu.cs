@@ -33,4 +33,8 @@ public class PlayMenu : MonoBehaviour
     {
         SceneManager.LoadScene(5);
     }
+    public void creditsScene()
+    {
+        SceneManager.LoadScene(6);
+    }
 }
