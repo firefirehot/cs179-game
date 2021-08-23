@@ -27,9 +27,6 @@ public class MusicHandler : MonoBehaviour
 
     //Update is called every frame. Checks to see if we are in a different scene than what we started in.
     void Update(){
-        if(SceneManager.GetActiveScene().buildIndex != scene){
-            Destroy(first);
-        }
         if(Input.GetKeyDown(KeyCode.Escape)){
             Pause();
         }
