@@ -13,8 +13,7 @@ public class BezierFollow : MonoBehaviour
 
     private Vector2 objectPosition;
 
-    [SerializeField]
-    private float speedModifier;
+    // private float speedModifier;
 
     private bool coroutineAllowed;
 
@@ -44,6 +43,10 @@ public class BezierFollow : MonoBehaviour
         Vector2 p1 = routes[routeNum].GetChild(1).position;
         Vector2 p2 = routes[routeNum].GetChild(2).position;
         Vector2 p3 = routes[routeNum].GetChild(3).position;
+
+        // float speedModifer = routes[routeNum];
+        // float speedModifier = 0.25f;
+        float speedModifier = routes[routeNum].GetComponent<Route>().speedModifier;
 
         while (tParam < 1)
         {
