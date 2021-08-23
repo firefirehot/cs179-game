@@ -7,7 +7,7 @@ public class countDownScript : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private float initialTime = 240f;
+    private float initialTime = 100f;
     private Text myText;
     //public Text myText;
     private float TimePassed;
