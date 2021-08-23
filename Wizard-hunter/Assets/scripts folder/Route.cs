@@ -9,6 +9,8 @@ public class Route : MonoBehaviour
 
     private Vector2 gizmosPosition;
 
+    public float speedModifier;
+
     private void OnDrawGizmos()
     {
         for (float t = 0; t <= 1; t += 0.05f)
