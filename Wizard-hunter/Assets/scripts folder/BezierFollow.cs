@@ -9,6 +9,8 @@ public class BezierFollow : MonoBehaviour
 
     private int routeToGo;
 
+    public int currentRoute;
+
     private float tParam;
 
     private Vector2 objectPosition;
@@ -24,6 +26,7 @@ public class BezierFollow : MonoBehaviour
         tParam = 0f;
         // speedModifier = 0.25f;
         coroutineAllowed = true;
+        currentRoute = 0;
     }
 
     // Update is called once per frame
@@ -38,6 +41,7 @@ public class BezierFollow : MonoBehaviour
     private IEnumerator GoByTheRoute(int routeNum)
     {
         coroutineAllowed = false;
+        currentRoute = routeNum;
 
         Vector2 p0 = routes[routeNum].GetChild(0).position;
         Vector2 p1 = routes[routeNum].GetChild(1).position;
@@ -65,6 +69,7 @@ public class BezierFollow : MonoBehaviour
         if (routeToGo > routes.Length - 1)//change this if statment content to determine how the wizard behaves at the end of the route
         {
             routeToGo = 0;
+
         }
 
         coroutineAllowed = true;

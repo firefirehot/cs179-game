@@ -11,6 +11,7 @@ public class icicle_shooter : MonoBehaviour
     [SerializeField] private LayerMask unactivatedTrapLayerMask;
     [SerializeField] private float distToStartIceing;
     [SerializeField] private float IceBallIceRate;
+    [SerializeField] private float IceBallIceRateFinal;
     [SerializeField] private float IceBallSpeed;
 
     private BoxCollider2D boxCollider;
@@ -42,6 +43,10 @@ public class icicle_shooter : MonoBehaviour
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(new Vector2(transform.position.x, transform.position.y + distToStartIceing), new Vector2(distToStartIceing,boxCollider.bounds.size.x ), 0f, Vector2.down, distToStartIceing*2f, playerLayerMask);//detects the player in a square left of the wizard that is distToStartIceing in length
 
+        if (GetComponent<BezierFollow>().currentRoute == 15)
+        {
+            IceBallIceRate = IceBallIceRateFinal;
+        }
 
         if (raycastHit.collider != null)//if player detected
         {

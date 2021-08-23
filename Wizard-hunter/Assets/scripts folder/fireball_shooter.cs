@@ -11,6 +11,7 @@ public class fireball_shooter : MonoBehaviour
     [SerializeField] private LayerMask unactivatedTrapLayerMask;
     [SerializeField] private float distToStartFireing;
     [SerializeField] private float fireBallFireRate;
+    [SerializeField] private float fireBallFireRateFinal;
     [SerializeField] private float fireBallSpeed;
 
     private BoxCollider2D boxCollider;
@@ -40,7 +41,10 @@ public class fireball_shooter : MonoBehaviour
         */
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(transform.position, new Vector2(boxCollider.bounds.size.x, distToStartFireing), 0f, Vector2.left, distToStartFireing, playerLayerMask);//detects the player in a square left of the wizard that is distToStartFireing in length
-
+        if (GetComponent<BezierFollow>().currentRoute == 14)
+        {
+            fireBallFireRate = fireBallFireRateFinal;
+        }
 
         if (raycastHit.collider != null)//if player detected
         {
