@@ -11,10 +11,10 @@ public class PlayMenu : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    //PlayGame1_2 will load level 1 wizard 1, when those scenes have been initialized  
+    //PlayGame1_2 will load level 1 wizard 2, when those scenes have been initialized  
     public void PlayGame1_2()
     {
-        Debug.Log("TODO PlayGame1_2");
+        SceneManager.LoadScene(8);
     }
 
     //PlayGame2_1 will load level 2 wizard 1, when those scenes have been initialized
@@ -26,7 +26,7 @@ public class PlayMenu : MonoBehaviour
     //PlayGame2_2 will load level 2 wizard 2, when those scenes have been initialized
     public void PlayGame2_2()
     {
-        Debug.Log("TODO PlayGame2_2");
+        SceneManager.LoadScene(7);
     }
 
     public void tutorialScene()
