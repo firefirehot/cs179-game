@@ -23,7 +23,7 @@ public class icewall_script : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color = new Color(trapColor.r, trapColor.g, trapColor.b, trapColor.r);//makes trap visible.
             boxCollider.isTrigger = false;
-            gameObject.layer = 11;//changes laayer to ground layer
+            gameObject.layer = 10;//changes laayer to ground layer
         }
     }
 }

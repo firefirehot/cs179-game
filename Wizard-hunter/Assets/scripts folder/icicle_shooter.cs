@@ -63,7 +63,7 @@ public class icicle_shooter : MonoBehaviour
             timeToNextIceBall = IceBallIceRate;//if player is out of range then reset the time to next Iceball
 
             //if player outside of Ice ball range he starts to activate traps instead
-            RaycastHit2D unactivatedTrapRaycastHit = Physics2D.BoxCast(new Vector2(transform.position.x, transform.position.y + distToStartIceing), new Vector2(distToStartIceing, boxCollider.bounds.size.x), 0f, Vector2.down, distToStartIceing * 2f, unactivatedTrapLayerMask);//detect unactivated traps
+            RaycastHit2D unactivatedTrapRaycastHit = Physics2D.BoxCast(new Vector2(transform.position.x, transform.position.y + boxCollider.bounds.size.y), new Vector2(boxCollider.bounds.size.x, boxCollider.bounds.size.y), 0f, Vector2.down, boxCollider.bounds.size.y, unactivatedTrapLayerMask);//detect unactivated traps
             if (unactivatedTrapRaycastHit.collider != null)
             {
                 unactivatedTrapRaycastHit.transform.gameObject.layer = 9;//if unactivatedTrap detected then we change it's layer to trap. The trap itself will handle what it needs to do to "activate"
